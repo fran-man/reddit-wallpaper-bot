@@ -32,7 +32,23 @@ public class ListingParser{
       return new ArrayList<>();
     }
     else{
-      return jsonNode.findValues("data");
+      return jsonNode.findValues(key);
     }
   }
+  
+	private List<JsonNode> getListingChildren() {
+		JsonNode jsonNode = null;
+		try {
+			log.info(this.listingString);
+			jsonNode = this.objectMapper.readTree(this.listingString);
+		} catch (IOException ex) {
+			log.error(ex.getMessage());
+		}
+
+		if (jsonNode == null) {
+			return new ArrayList<>();
+		} else {
+			return jsonNode.findValues("data").get(0).findValues("children").toArray();
+		}
+	}
 }

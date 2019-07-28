@@ -5,10 +5,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import springfox.documentation.spring.web.json.Json;
+
 import java.util.List;
 import java.util.ArrayList;
 
 import java.io.IOException;
+import java.util.stream.Collectors;
 
 @Slf4j
 public class ListingParser{
@@ -19,20 +22,14 @@ public class ListingParser{
   }
 
   public List<JsonNode> extractValuesFromResults(String key){
-    JsonNode jsonNode = null;
-    try{
-      log.info(this.listingString);
-      jsonNode = this.objectMapper.readTree(this.listingString);
-    }
-    catch(IOException ex){
-      log.error(ex.getMessage());
-    }
 
-    if(jsonNode == null){
+    List<JsonNode> children = this.getListingChildren();
+    if(children.size() == 0){
       return new ArrayList<>();
     }
     else{
-      return jsonNode.findValues(key);
+      List<JsonNode> resultNodes = children.stream().flatMap(c -> c.findValues("data").get(0).findValues(key).stream()).filter(c -> c != null).collect(Collectors.toList());
+      return resultNodes.size() == 0 ? new ArrayList<>() : resultNodes;
     }
   }
   
@@ -48,7 +45,7 @@ public class ListingParser{
 		if (jsonNode == null) {
 			return new ArrayList<>();
 		} else {
-			return jsonNode.findValues("data").get(0).findValues("children").toArray();
+			return jsonNode.findValues("data").get(0).findValues("children");
 		}
 	}
 }

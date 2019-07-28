@@ -36,7 +36,7 @@ public class SubSearch{
      try{
 	      HttpResponse response = client.execute(request);
         ListingParser parser = new ListingParser(IOUtils.toString(response.getEntity().getContent(), StandardCharsets.UTF_8.name()));
-        for(JsonNode node : parser.extractValuesFromResults("")) {
+        for(JsonNode node : parser.extractValuesFromResults("subreddit")) {
         	LOGGER.info(node.asText("InvalidNode..."));
         }
         return IOUtils.toString(response.getEntity().getContent(), StandardCharsets.UTF_8.name());

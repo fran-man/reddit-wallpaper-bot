@@ -20,6 +20,6 @@ public class ListingParserTest {
 	public void testExtractValuesReturnsCorrectNumberOfResults() {
 		List<JsonNode> nodes = listingParser.extractValuesFromResults("subreddit");
 		assertEquals(1, nodes.size());
-		assertEquals("wallpaper", actual);
+		assertEquals("wallpaper", nodes.get(0).asText());
 	}
 }

@@ -3,3 +3,5 @@ target/*
 .project
 *.log
 *.gz
+/target/
+.idea/*

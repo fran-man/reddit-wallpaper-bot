@@ -20,7 +20,6 @@ public class DefaultController{
 
   @RequestMapping(value = "callreddit", method = RequestMethod.GET)
   public String callReddit(){
-    this.subSch.searchSubWithString("wallpaper", "skyrim");
-    return "Hello from reddit!";
+    return this.subSch.searchSubWithString("wallpaper", "3840");
   }
 }

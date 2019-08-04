@@ -24,7 +24,7 @@ public class ListingParser {
         if (children.size() == 0) {
             return new ArrayList<>();
         } else {
-            List<JsonNode> resultNodes = children.stream().flatMap(c -> c.findValues("data").get(0).findValues(key).stream()).filter(c -> c != null).collect(Collectors.toList());
+            List<JsonNode> resultNodes = children.stream().map(c -> c. findValues("data").get(0).get(key)).filter(c -> c != null).collect(Collectors.toList());
             return resultNodes.size() == 0 ? new ArrayList<>() : resultNodes;
         }
     }

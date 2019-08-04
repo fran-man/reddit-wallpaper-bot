@@ -1,7 +1,9 @@
 package com.franm.wallpaperbot.Format;
 
-import java.util.ArrayList;
+import com.fasterxml.jackson.databind.JsonNode;
 
-public interface OutputFormatter<T> {
-    public String format(ArrayList<T> results);
+import java.util.List;
+
+public interface OutputFormatter<T extends JsonNode> {
+    String format(List<T> results);
 }

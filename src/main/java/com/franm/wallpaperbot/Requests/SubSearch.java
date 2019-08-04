@@ -1,5 +1,6 @@
 package com.franm.wallpaperbot.Requests;
 
+import com.franm.wallpaperbot.Format.PlainTextFormatter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.apache.http.HttpResponse;
@@ -24,6 +25,8 @@ public class SubSearch{
 
   private HttpClient client = HttpClientBuilder.create().build();
 
+  private PlainTextFormatter formatter = new PlainTextFormatter();
+
   public SubSearch(){
 
   }
@@ -36,10 +39,10 @@ public class SubSearch{
      try{
 	      HttpResponse response = client.execute(request);
         ListingParser parser = new ListingParser(IOUtils.toString(response.getEntity().getContent(), StandardCharsets.UTF_8.name()));
-        for(JsonNode node : parser.extractValuesFromResults("subreddit")) {
+        for(JsonNode node : parser.extractValuesFromResults("url")) {
         	LOGGER.info(node.asText("InvalidNode..."));
         }
-        return IOUtils.toString(response.getEntity().getContent(), StandardCharsets.UTF_8.name());
+        return formatter.format(parser.extractValuesFromResults("url"));
       }
       catch (Exception ex){
         LOGGER.error("Error Calling URL!", ex);

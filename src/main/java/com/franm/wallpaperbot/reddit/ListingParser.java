@@ -32,7 +32,6 @@ public class ListingParser {
     private List<JsonNode> getListingChildren() {
         JsonNode jsonNode = null;
         try {
-            log.info(this.listingString);
             jsonNode = this.objectMapper.readTree(this.listingString);
         } catch (IOException ex) {
             log.error(ex.getMessage());

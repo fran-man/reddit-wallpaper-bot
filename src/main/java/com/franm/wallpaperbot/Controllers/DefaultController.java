@@ -2,9 +2,8 @@ package com.franm.wallpaperbot.Controllers;
 
 import com.franm.wallpaperbot.Requests.SubSearch;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 public class DefaultController{
@@ -18,8 +17,9 @@ public class DefaultController{
     return "Hello!";
   }
 
-  @RequestMapping(value = "callreddit", method = RequestMethod.GET)
-  public String callReddit(){
-    return this.subSch.searchSubWithString("wallpaper", "3840");
+  @RequestMapping(value = "callreddit", method = RequestMethod.GET, produces = MediaType.TEXT_PLAIN_VALUE)
+  public @ResponseBody
+  String callReddit(@RequestParam(defaultValue = "wallpaper") String subreddit, @RequestParam(defaultValue = "3840") String term){
+    return this.subSch.searchSubWithString(subreddit, term);
   }
 }

@@ -7,7 +7,7 @@ BUCKET=$(curl -s "http://metadata.google.internal/computeMetadata/v1/instance/at
 echo "Project ID: ${PROJECTID} Bucket: ${BUCKET}"
 
 # Get the files we need
-gsutil cp gs://${BUCKET}/demo.jar .
+gsutil cp gs://${BUCKET}/rwb.jar .
 
 # Install dependencies
 apt-get update

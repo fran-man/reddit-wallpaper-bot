@@ -1,12 +1,14 @@
 package com.franm.wallpaperbot.Requests;
 
 import com.franm.wallpaperbot.Format.PlainTextFormatter;
+import com.franm.wallpaperbot.reddit.TokenManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.client.HttpClient;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -27,11 +29,15 @@ public class SubSearch{
 
   private PlainTextFormatter formatter = new PlainTextFormatter();
 
+  @Autowired
+  private TokenManager tknMgr;
+
   public SubSearch(){
 
   }
 
   public String searchSubWithString(String sub, String searchTerm){
+      tknMgr.getToken();
     HttpGet request = new HttpGet(SEARCH_URL_PREFIX + sub + SEARCH_URL_FUNCTION + searchTerm + SEARCH_URL_SUFFIX_WEEK);
 
 	   // add request header

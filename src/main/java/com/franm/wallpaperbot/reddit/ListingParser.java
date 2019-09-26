@@ -22,6 +22,7 @@ public class ListingParser {
 
         List<JsonNode> children = this.getListingChildren();
         if (children.size() == 0) {
+            log.info("No elements matching '" + key + "' in child nodes...");
             return new ArrayList<>();
         } else {
             List<JsonNode> resultNodes = children.stream().map(c -> c. findValues("data").get(0).get(key)).filter(c -> c != null).collect(Collectors.toList());

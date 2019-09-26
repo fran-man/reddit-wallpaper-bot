@@ -2,6 +2,7 @@ package com.franm.wallpaperbot.Requests;
 
 import com.franm.wallpaperbot.Format.PlainTextFormatter;
 import com.franm.wallpaperbot.reddit.TokenManager;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.apache.http.HttpResponse;
@@ -18,6 +19,7 @@ import java.nio.charset.StandardCharsets;
 import org.apache.commons.io.IOUtils;
 
 @Component
+@Slf4j
 public class SubSearch{
   private static final Logger LOGGER = LoggerFactory.getLogger(SubSearch.class);
 
@@ -46,12 +48,12 @@ public class SubSearch{
 	      HttpResponse response = client.execute(request);
         ListingParser parser = new ListingParser(IOUtils.toString(response.getEntity().getContent(), StandardCharsets.UTF_8.name()));
         for(JsonNode node : parser.extractValuesFromResults("url")) {
-        	LOGGER.info(node.asText("InvalidNode..."));
+        	log.debug(node.asText("InvalidNode..."));
         }
         return formatter.format(parser.extractValuesFromResults("url"));
       }
       catch (Exception ex){
-        LOGGER.error("Error Calling URL!", ex);
+        log.error("Error Calling URL!", ex);
         return "";
       }
   }

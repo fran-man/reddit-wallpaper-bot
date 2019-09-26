@@ -5,6 +5,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpHeaders;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
+import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.CredentialsProvider;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
@@ -20,6 +21,7 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.time.LocalDateTime;
 import java.util.Base64;
 
 @Component
@@ -30,6 +32,7 @@ public class TokenManager {
     private String pass;
     private String appID;
     private String appSecret;
+    private LocalDateTime lastRefresh = LocalDateTime.now().minusDays(1);
 
     private HttpClient client = HttpClientBuilder.create().build();
 
@@ -48,10 +51,22 @@ public class TokenManager {
 
     /**
      * Method to fetch the token from reddit
-     * TODO: Cache the token and only go to reddit if it is expired.
+     *
      * @return The token as a string
      */
     public String getToken(){
+        if(this.isTokenStale()){
+            try {
+                refreshTokenFromReddit();
+            } catch (Exception e) {
+                log.error("Exception refreshing token, it may be stale.", e.getMessage());
+            }
+            this.lastRefresh = LocalDateTime.now();
+        }
+        return this.token;
+    }
+
+    private void refreshTokenFromReddit() throws URISyntaxException, IOException {
         URIBuilder bldr = null;
         try {
             bldr = new URIBuilder(ACCESS_TOKEN_URL);
@@ -60,16 +75,23 @@ public class TokenManager {
             postReq.addHeader(HttpHeaders.USER_AGENT, "WallpaperBot/0.1 by fran_the_man");
             postReq.addHeader(HttpHeaders.AUTHORIZATION,  "Basic " + Base64.getEncoder().encodeToString((this.appID + ":" + appSecret).getBytes(StandardCharsets.UTF_8)));
 
-            log.info(IOUtils.toString(client.execute(postReq).getEntity().getContent(), StandardCharsets.UTF_8.name()));
+            //log.info(IOUtils.toString(client.execute(postReq).getEntity().getContent(), StandardCharsets.UTF_8.name()));
+            log.info("Refreshing - Last refresh was " + this.lastRefresh);
+            this.token = IOUtils.toString(client.execute(postReq).getEntity().getContent(), StandardCharsets.UTF_8.name());
         }
         catch(URISyntaxException ex){
             log.error("Incorrect URI" + ex.getMessage());
-            return "";
+            throw ex;
+        } catch (ClientProtocolException e) {
+            log.error("Protocol Exception Refreshing Token: " + e.getMessage());
+            throw e;
+        } catch (IOException e) {
+            log.error("IOException Refreshing Token: " + e.getMessage());
+            throw e;
         }
-        catch(IOException ioex){
-            log.error("Error fetching token, returning potentially stale token... " + ioex.getMessage());
-            return this.token;
-        }
-        return this.token;
+    }
+
+    private boolean isTokenStale(){
+        return this.lastRefresh.isBefore(LocalDateTime.now().minusHours(1));
     }
 }

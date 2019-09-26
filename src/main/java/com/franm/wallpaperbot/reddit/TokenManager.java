@@ -1,5 +1,6 @@
 package com.franm.wallpaperbot.reddit;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpHeaders;
@@ -33,10 +34,11 @@ public class TokenManager {
     private String appID;
     private String appSecret;
     private LocalDateTime lastRefresh = LocalDateTime.now().minusDays(1);
+    private ObjectMapper objMapper = new ObjectMapper();
 
     private HttpClient client = HttpClientBuilder.create().build();
 
-    private String token;
+    private RedditToken token;
 
     private static final String ACCESS_TOKEN_URL = "https://www.reddit.com/api/v1/access_token";
 
@@ -46,7 +48,7 @@ public class TokenManager {
         this.pass = pass;
         this.appID = appID;
         this.appSecret = appSecret;
-        log.info("Loaded TokenManager for user {}",this.username);
+        log.info("Loaded TokenManager for user {}", this.username);
     }
 
     /**
@@ -54,7 +56,7 @@ public class TokenManager {
      *
      * @return The token as a string
      */
-    public String getToken(){
+    public RedditToken getToken(){
         if(this.isTokenStale()){
             try {
                 refreshTokenFromReddit();
@@ -77,7 +79,9 @@ public class TokenManager {
 
             //log.info(IOUtils.toString(client.execute(postReq).getEntity().getContent(), StandardCharsets.UTF_8.name()));
             log.info("Refreshing - Last refresh was " + this.lastRefresh);
-            this.token = IOUtils.toString(client.execute(postReq).getEntity().getContent(), StandardCharsets.UTF_8.name());
+
+            String tokenString = IOUtils.toString(client.execute(postReq).getEntity().getContent(), StandardCharsets.UTF_8.name());
+            this.token = this.objMapper.readValue(tokenString, RedditToken.class);
         }
         catch(URISyntaxException ex){
             log.error("Incorrect URI" + ex.getMessage());

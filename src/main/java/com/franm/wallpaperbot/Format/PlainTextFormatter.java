@@ -2,7 +2,9 @@ package com.franm.wallpaperbot.Format;
 
 import java.util.List;
 import com.fasterxml.jackson.databind.JsonNode;
+import org.springframework.stereotype.Component;
 
+@Component
 public class PlainTextFormatter implements OutputFormatter<JsonNode> {
     @Override
     public String format(List<JsonNode> results) {

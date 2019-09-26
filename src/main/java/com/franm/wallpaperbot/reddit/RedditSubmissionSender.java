@@ -16,6 +16,7 @@ public class RedditSubmissionSender {
     }
 
     public void submitPost(String postContent, String subreddit, String title){
-        this.tknMgr.getToken();
+        String accessToken = this.tknMgr.getToken().getAccessToken();
+        log.debug("Access Token: {}", accessToken);
     }
 }

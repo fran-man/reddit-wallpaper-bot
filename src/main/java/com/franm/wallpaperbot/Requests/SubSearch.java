@@ -29,7 +29,8 @@ public class SubSearch{
 
   private HttpClient client = HttpClientBuilder.create().build();
 
-  private PlainTextFormatter formatter = new PlainTextFormatter();
+  @Autowired
+  private PlainTextFormatter formatter;
 
   @Autowired
   private TokenManager tknMgr;

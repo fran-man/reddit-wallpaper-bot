@@ -1,5 +1,6 @@
 package com.franm.wallpaperbot.Controllers;
 
+import com.franm.wallpaperbot.Requests.SearchResponse;
 import com.franm.wallpaperbot.Requests.SubSearch;
 import com.franm.wallpaperbot.reddit.RedditSubmissionSender;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +25,7 @@ public class DefaultController{
   @RequestMapping(value = "callreddit", method = RequestMethod.GET, produces = MediaType.TEXT_PLAIN_VALUE)
   public @ResponseBody
   String callReddit(@RequestParam(defaultValue = "wallpaper") String subreddit, @RequestParam(defaultValue = "3840") String term){
-    this.submissionSender.submitPost("","","");
-    return this.subSch.searchSubWithString(subreddit, term);
+    this.submissionSender.submitPost(this.subSch.searchSubWithString(subreddit, term));
+    return "Done!";
   }
 }

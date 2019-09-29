@@ -14,7 +14,7 @@ public class PlainTextFormatter implements OutputFormatter<JsonNode> {
             return bldr.toString();
         }
         for(JsonNode node : results){
-            bldr.append(node.asText() + "\n");
+            bldr.append(node.asText() + "\n\n");
         }
         bldr.setLength(bldr.length() - 1);
 

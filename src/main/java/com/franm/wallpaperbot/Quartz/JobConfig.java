@@ -9,6 +9,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.quartz.CronTriggerFactoryBean;
 
+import java.time.ZoneId;
+import java.util.TimeZone;
+
 @Configuration
 public class JobConfig {
     @Bean
@@ -31,7 +34,8 @@ public class JobConfig {
         cronTriggerFactory.setBeanName(jobDetail.getClass().toString());
         cronTriggerFactory.setDescription("Search Job for UHD Wallpapers");
         cronTriggerFactory.setJobDataMap(jobDetail.getJobDataMap());
-        cronTriggerFactory.setCronExpression("0 * * ? * *");
+        cronTriggerFactory.setCronExpression("0 0 18 ? * *");
+        cronTriggerFactory.setTimeZone(TimeZone.getTimeZone(ZoneId.of("Europe/London")));
         cronTriggerFactory.setJobDetail(jobDetail);
         return cronTriggerFactory;
     }

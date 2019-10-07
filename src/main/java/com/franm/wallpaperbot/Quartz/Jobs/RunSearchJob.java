@@ -25,7 +25,7 @@ public class RunSearchJob extends QuartzJobBean {
         String name = dataMap.getString("name");
         String subreddit = dataMap.getString("subreddit");
         String term = dataMap.getString("term");
-        log.info("Running: {}", name);
+        log.info("Running: {} with subreddit = {}", name, subreddit);
         this.sender.submitPost(this.subSch.searchSubWithString(subreddit, term));
     }
 }

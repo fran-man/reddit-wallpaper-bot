@@ -55,7 +55,7 @@ public class RedditSubmissionSender {
             postreq.setEntity(new UrlEncodedFormEntity(postParameters, StandardCharsets.UTF_8.name()));
 
             log.info(postreq.toString());
-            log.info(IOUtils.toString(client.execute(postreq).getEntity().getContent(), StandardCharsets.UTF_8.name()));
+            log.debug(IOUtils.toString(client.execute(postreq).getEntity().getContent(), StandardCharsets.UTF_8.name()));
         } catch (URISyntaxException e) {
             log.error("Error in URI: {}", e.getMessage());
         } catch (ClientProtocolException e) {

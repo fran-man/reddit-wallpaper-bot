@@ -1,7 +1,6 @@
 package com.franm.wallpaperbot.Quartz;
 
 import com.franm.wallpaperbot.Quartz.Jobs.RunSearchJob;
-import lombok.Builder;
 import org.quartz.JobBuilder;
 import org.quartz.JobDataMap;
 import org.quartz.JobDetail;
@@ -14,7 +13,7 @@ import org.springframework.scheduling.quartz.CronTriggerFactoryBean;
 public class JobConfig {
     @Bean
     public JobDetail ultraHDJob(@Qualifier("uhdJobDataMap") JobDataMap datamap){
-        return JobBuilder.newJob(RunSearchJob.class).usingJobData(datamap).withIdentity(datamap.getString("name")).build();
+        return JobBuilder.newJob(RunSearchJob.class).usingJobData(datamap).withIdentity(datamap.getString("name")).storeDurably(true).build();
     }
 
     @Bean
@@ -27,12 +26,13 @@ public class JobConfig {
     }
 
     @Bean
-    public CronTriggerFactoryBean cronTriggerFactory(@Qualifier("uhdJobDataMap") JobDetail jobDetail){
+    public CronTriggerFactoryBean cronTriggerFactory(@Qualifier("ultraHDJob") JobDetail jobDetail){
         CronTriggerFactoryBean cronTriggerFactory = new CronTriggerFactoryBean();
         cronTriggerFactory.setBeanName(jobDetail.getClass().toString());
         cronTriggerFactory.setDescription("Search Job for UHD Wallpapers");
         cronTriggerFactory.setJobDataMap(jobDetail.getJobDataMap());
-        cronTriggerFactory.setCronExpression("0 * * * * *");
+        cronTriggerFactory.setCronExpression("0 * * ? * *");
+        cronTriggerFactory.setJobDetail(jobDetail);
         return cronTriggerFactory;
     }
 }

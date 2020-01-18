@@ -16,7 +16,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.franm.wallpaperbot.reddit.ListingParser;
 
 import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
 
 import org.apache.commons.io.IOUtils;
 
@@ -49,12 +48,12 @@ public class SubSearch{
 	   // add request header
 	   request.addHeader("User-Agent", "USER_AGENT");
      try{
-	      HttpResponse response = client.execute(request);
+         HttpResponse response = client.execute(request);
         ListingParser parser = new ListingParser(IOUtils.toString(response.getEntity().getContent(), StandardCharsets.UTF_8.name()));
         for(JsonNode node : parser.extractValuesFromResults("url")) {
         	log.debug(node.asText("InvalidNode..."));
         }
-        schResp.setFormattedResult(formatter.format(parser.extractValuesFromResults("url")));
+        schResp.setFormattedResult(formatter.formatWithDelimiter(parser.extractValuesFromResults("url"), "\n\n"));
         schResp.setQueryString(searchTerm);
         schResp.getSubredditsSeached().add(sub);
         return schResp;
@@ -63,5 +62,8 @@ public class SubSearch{
         log.error("Error Calling URL!", ex);
         return schResp;
       }
+     finally {
+        request.releaseConnection();
+     }
   }
 }

@@ -16,4 +16,11 @@ public class PlainTextFormatterTest {
         String result = formatterUnderTest.format(listingParser2Children2Values.extractValuesFromResults("subreddit"));
         assertEquals(expected,result);
     }
+
+    @Test
+    public void testFormatterPrintsListOfCorrectValuesWithExpectedDelimiter(){
+        String expected = "wallpaper\n\nwallpaper2\n";
+        String result = formatterUnderTest.formatWithDelimiter(listingParser2Children2Values.extractValuesFromResults("subreddit"), "\n\n");
+        assertEquals(expected,result);
+    }
 }

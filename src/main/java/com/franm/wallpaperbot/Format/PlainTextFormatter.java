@@ -14,8 +14,7 @@ public class PlainTextFormatter implements OutputFormatter<JsonNode> {
     public String formatWithDelimiter(List<JsonNode> results, String delimiter) {
         StringBuilder bldr = new StringBuilder();
         if(results.size() == 0){
-            bldr.append("No Results found!");
-            return bldr.toString();
+            return "";
         }
         for(JsonNode node : results){
             bldr.append(node.asText() + delimiter);

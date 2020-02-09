@@ -3,15 +3,19 @@ package com.franm.wallpaperbot.reddit;
 import com.franm.wallpaperbot.Format.OutputFormatter;
 import com.franm.wallpaperbot.Format.PlainTextFormatter;
 import com.franm.wallpaperbot.Requests.SearchResponse;
+import com.sun.net.httpserver.HttpsParameters;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpHeaders;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
+import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.utils.URIBuilder;
+import org.apache.http.config.ConnectionConfig;
+import org.apache.http.config.SocketConfig;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.message.BasicNameValuePair;
 import org.springframework.stereotype.Component;
@@ -28,7 +32,9 @@ import java.util.ArrayList;
 public class RedditSubmissionSender {
     private OutputFormatter formatter;
     private TokenManager tknMgr;
-    private HttpClient client = HttpClientBuilder.create().build();
+    private HttpClient client = HttpClientBuilder.create().setDefaultRequestConfig(
+            RequestConfig.custom().setConnectTimeout(5000).build())
+            .setDefaultSocketConfig(SocketConfig.custom().setSoTimeout(5000).build()).build();
 
     private static final String SUBMIT_POST_URL = "https://oauth.reddit.com/api/submit";
 
@@ -40,9 +46,11 @@ public class RedditSubmissionSender {
     public void submitPost(SearchResponse searchResponse){
         String accessToken = this.tknMgr.getToken().getAccessToken();
         log.debug("Access Token: {}", accessToken);
+        URIBuilder uriBuilder = null;
+        HttpPost postreq = new HttpPost();
         try {
-            URIBuilder uriBuilder = new URIBuilder(SUBMIT_POST_URL);
-            HttpPost postreq = new HttpPost(uriBuilder.build());
+            uriBuilder = new URIBuilder(SUBMIT_POST_URL);
+            postreq = new HttpPost(uriBuilder.build());
             postreq.addHeader(HttpHeaders.USER_AGENT, "WallpaperBot/0.1 by fran_the_man");
             postreq.addHeader(HttpHeaders.AUTHORIZATION, "bearer " + accessToken);
 
@@ -62,6 +70,9 @@ public class RedditSubmissionSender {
             log.error("Error submitting post to reddit: {}", e.getMessage());
         } catch (IOException e) {
             log.error("Error submitting post to reddit: {}", e.getMessage());
+        }
+        finally {
+            postreq.releaseConnection();
         }
     }
 

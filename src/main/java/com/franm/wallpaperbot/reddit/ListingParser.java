@@ -2,6 +2,7 @@ package com.franm.wallpaperbot.reddit;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
@@ -25,12 +26,12 @@ public class ListingParser {
             log.info("No elements matching '" + key + "' in child nodes...");
             return new ArrayList<>();
         } else {
-            List<JsonNode> resultNodes = children.stream().map(c -> c. findValues("data").get(0).get(key)).filter(c -> c != null).collect(Collectors.toList());
+            List<JsonNode> resultNodes = children.stream().map(c -> c.findValues("data").get(0).get(key)).filter(c -> c != null).collect(Collectors.toList());
             return resultNodes.size() == 0 ? new ArrayList<>() : resultNodes;
         }
     }
 
-    private List<JsonNode> getListingChildren() {
+    public List<JsonNode> getListingChildren() {
         JsonNode jsonNode = null;
         try {
             jsonNode = this.objectMapper.readTree(this.listingString);

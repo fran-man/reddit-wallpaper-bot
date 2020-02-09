@@ -1,6 +1,7 @@
 package com.franm.wallpaperbot.Requests;
 
 import com.franm.wallpaperbot.Format.PlainTextFormatter;
+import com.franm.wallpaperbot.Format.PrettyUrlFormatter;
 import com.franm.wallpaperbot.reddit.TokenManager;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
@@ -31,7 +32,7 @@ public class SubSearch{
   private HttpClient client = HttpClientBuilder.create().build();
 
   @Autowired
-  private PlainTextFormatter formatter;
+  private PrettyUrlFormatter formatter;
 
   @Autowired
   private TokenManager tknMgr;
@@ -53,7 +54,7 @@ public class SubSearch{
         for(JsonNode node : parser.extractValuesFromResults("url")) {
         	log.debug(node.asText("InvalidNode..."));
         }
-        schResp.setFormattedResult(formatter.formatWithDelimiter(parser.extractValuesFromResults("url"), "\n\n"));
+        schResp.setFormattedResult(formatter.formatWithDelimiter(parser.getListingChildren(), "\n\n"));
         schResp.setQueryString(searchTerm);
         schResp.getSubredditsSeached().add(sub);
         return schResp;

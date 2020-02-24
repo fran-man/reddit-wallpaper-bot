@@ -56,8 +56,8 @@ public class RedditSubmissionSender {
 
             ArrayList<NameValuePair> postParameters = new ArrayList<NameValuePair>();
             postParameters.add(new BasicNameValuePair("sr", "WallpaperBot"));
-            postParameters.add(new BasicNameValuePair("text", this.generatePostContent(searchResponse)));
-            postParameters.add(new BasicNameValuePair("title", this.generatePostTitle(searchResponse)));
+            postParameters.add(new BasicNameValuePair("text", SubmissionUtils.generatePostContent(searchResponse)));
+            postParameters.add(new BasicNameValuePair("title", SubmissionUtils.generatePostTitle(searchResponse)));
             postParameters.add(new BasicNameValuePair("kind", "self"));
 
             postreq.setEntity(new UrlEncodedFormEntity(postParameters, StandardCharsets.UTF_8.name()));
@@ -74,24 +74,5 @@ public class RedditSubmissionSender {
         finally {
             postreq.releaseConnection();
         }
-    }
-
-    private String generatePostTitle(SearchResponse searchResponse){
-        return "Top " + searchResponse.getQueryString() + " wallpapers for " + LocalDate.now(ZoneId.of("Europe/London")).toString();
-    }
-
-    private String generatePostContent(SearchResponse searchResponse){
-        StringBuilder strb = new StringBuilder("");
-        strb.append("Searched: ");
-        for(String subreddit : searchResponse.getSubredditsSeached()){
-            strb.append(subreddit + ", ");
-        }
-        strb.deleteCharAt(strb.length() - 1);
-        strb.deleteCharAt(strb.length() - 1);
-        strb.append("\n\n");
-        strb.append(searchResponse.getFormattedResult());
-        String result = strb.toString();
-        log.debug(result);
-        return result;
     }
 }

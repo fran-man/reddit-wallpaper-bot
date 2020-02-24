@@ -51,7 +51,7 @@ public class SubSearch{
          HttpResponse response = client.execute(request);
         ListingParser parser = new ListingParser(IOUtils.toString(response.getEntity().getContent(), StandardCharsets.UTF_8.name()));
         for(JsonNode node : parser.extractValuesFromResults("url")) {
-        	log.debug(node.asText("InvalidNode..."));
+        	log.debug(node.asText("Invalid Node..."));
         }
         schResp.setFormattedResult(formatter.formatWithDelimiter(parser.getListingChildren(), "\n\n"));
         schResp.setQueryString(searchTerm);

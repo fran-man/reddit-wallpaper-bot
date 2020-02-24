@@ -28,6 +28,6 @@ public class RunSearchJob extends QuartzJobBean {
         String term = dataMap.getString("term");
         log.info("Running: {} with subreddit = {}", name, subreddit);
         SearchResponse resp = this.subSch.searchSubWithString(subreddit, term);
-        if (resp.getFormattedResult().equals("")) { log.info("Empty result"); } else {this.sender.submitPost(resp); };
+        if (resp.getFormattedResult().equals("")) { log.info("Empty result"); } else { this.sender.submitPost(resp); };
     }
 }

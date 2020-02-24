@@ -29,12 +29,38 @@ public class JobConfig {
     }
 
     @Bean
-    public CronTriggerFactoryBean cronTriggerFactory(@Qualifier("ultraHDJob") JobDetail jobDetail){
+    public CronTriggerFactoryBean uhdCronTriggerFactory(@Qualifier("ultraHDJob") JobDetail jobDetail){
         CronTriggerFactoryBean cronTriggerFactory = new CronTriggerFactoryBean();
         cronTriggerFactory.setBeanName(jobDetail.getClass().toString());
         cronTriggerFactory.setDescription("Search Job for UHD Wallpapers");
         cronTriggerFactory.setJobDataMap(jobDetail.getJobDataMap());
         cronTriggerFactory.setCronExpression("0 0 18 ? * *");
+        cronTriggerFactory.setTimeZone(TimeZone.getTimeZone(ZoneId.of("Europe/London")));
+        cronTriggerFactory.setJobDetail(jobDetail);
+        return cronTriggerFactory;
+    }
+
+    @Bean
+    public JobDetail abstractJob(@Qualifier("abstractJobDataMap") JobDataMap datamap){
+        return JobBuilder.newJob(RunSearchJob.class).usingJobData(datamap).withIdentity(datamap.getString("name")).storeDurably(true).build();
+    }
+
+    @Bean
+    public JobDataMap abstractJobDataMap(){
+        JobDataMap uhdJobDataMap = new JobDataMap();
+        uhdJobDataMap.put("name", "abstractJob");
+        uhdJobDataMap.put("subreddit", "wallpaper");
+        uhdJobDataMap.put("term", "abstract");
+        return uhdJobDataMap;
+    }
+
+    @Bean
+    public CronTriggerFactoryBean abstractCronTriggerFactory(@Qualifier("abstractJob") JobDetail jobDetail){
+        CronTriggerFactoryBean cronTriggerFactory = new CronTriggerFactoryBean();
+        cronTriggerFactory.setBeanName(jobDetail.getClass().toString());
+        cronTriggerFactory.setDescription("Search Job for abstract Wallpapers");
+        cronTriggerFactory.setJobDataMap(jobDetail.getJobDataMap());
+        cronTriggerFactory.setCronExpression("0 1 18 ? * *");
         cronTriggerFactory.setTimeZone(TimeZone.getTimeZone(ZoneId.of("Europe/London")));
         cronTriggerFactory.setJobDetail(jobDetail);
         return cronTriggerFactory;

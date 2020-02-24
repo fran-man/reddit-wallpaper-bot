@@ -1,6 +1,5 @@
 package com.franm.wallpaperbot.Requests;
 
-import com.franm.wallpaperbot.Format.PlainTextFormatter;
 import com.franm.wallpaperbot.Format.PrettyUrlFormatter;
 import com.franm.wallpaperbot.reddit.TokenManager;
 import lombok.extern.slf4j.Slf4j;
@@ -27,7 +26,7 @@ public class SubSearch{
 
   private static final String SEARCH_URL_PREFIX = "https://www.reddit.com/r/";
   private static final String SEARCH_URL_FUNCTION = "/search.json?q=";
-  private static final String SEARCH_URL_SUFFIX_WEEK = "&sort=top&restrict_sr=1&t=week";
+  private static final String SEARCH_URL_SUFFIX_DAY = "&sort=top&restrict_sr=1&t=day";
 
   private HttpClient client = HttpClientBuilder.create().build();
 
@@ -44,7 +43,7 @@ public class SubSearch{
   public SearchResponse searchSubWithString(String sub, String searchTerm){
     tknMgr.getToken();
     SearchResponse schResp = new SearchResponse();
-    HttpGet request = new HttpGet(SEARCH_URL_PREFIX + sub + SEARCH_URL_FUNCTION + searchTerm + SEARCH_URL_SUFFIX_WEEK);
+    HttpGet request = new HttpGet(SEARCH_URL_PREFIX + sub + SEARCH_URL_FUNCTION + searchTerm + SEARCH_URL_SUFFIX_DAY);
 
 	   // add request header
 	   request.addHeader("User-Agent", "USER_AGENT");
@@ -52,7 +51,7 @@ public class SubSearch{
          HttpResponse response = client.execute(request);
         ListingParser parser = new ListingParser(IOUtils.toString(response.getEntity().getContent(), StandardCharsets.UTF_8.name()));
         for(JsonNode node : parser.extractValuesFromResults("url")) {
-        	log.debug(node.asText("InvalidNode..."));
+        	log.debug(node.asText("Invalid Node..."));
         }
         schResp.setFormattedResult(formatter.formatWithDelimiter(parser.getListingChildren(), "\n\n"));
         schResp.setQueryString(searchTerm);

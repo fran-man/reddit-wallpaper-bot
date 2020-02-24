@@ -22,13 +22,6 @@ public class DefaultController{
     return "Hello!";
   }
 
-  @RequestMapping(value = "callreddit", method = RequestMethod.GET, produces = MediaType.TEXT_PLAIN_VALUE)
-  public @ResponseBody
-  String callReddit(@RequestParam(defaultValue = "wallpaper") String subreddit, @RequestParam(defaultValue = "3840") String term){
-    this.submissionSender.submitPost(this.subSch.searchSubWithString(subreddit, term));
-    return "Done!";
-  }
-
   @RequestMapping(value = "getpost", method = RequestMethod.GET, produces = MediaType.TEXT_PLAIN_VALUE)
   public @ResponseBody
   String getPost(@RequestParam(defaultValue = "wallpaper") String subreddit, @RequestParam(defaultValue = "3840") String term){
